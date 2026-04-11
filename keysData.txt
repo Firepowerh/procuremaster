@@ -1,0 +1,25 @@
+Supabase project id: ozciqmydakcdyhnughga
+
+
+anon key : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96Y2lxbXlkYWtjZHlobnVnaGdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NjA2NjgsImV4cCI6MjA5MTQzNjY2OH0.pZpOk8Hqhvg2G4C9J1-M40Cvn1Xw0x9WB-F-MbaDVVA
+
+
+service role key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96Y2lxbXlkYWtjZHlobnVnaGdhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTg2MDY2OCwiZXhwIjoyMDkxNDM2NjY4fQ.M1A-MyWLduzS7gxxGa0Dn5OOQQR8uy6uF2RwDebbOQk
+
+
+Gemini API key:
+AIzaSyBJ3NcSUWl05fJwUxr9R-pJERzn8PeChLo
+
+
+Resend API key:
+re_VyLZsh9D_7kNiNJzjb3vPj6uuGsNyvNFs
+
+
+
+
+
+
+
+
+
+
