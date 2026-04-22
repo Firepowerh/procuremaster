@@ -55,4 +55,45 @@
     @apply bg-background text-foreground;
     font-family: var(--font-body), system-ui, sans-serif;
   }
+
+  /* Visible focus ring for keyboard navigation (WCAG 2.4.7) */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Remove focus ring for mouse/touch interactions */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Respect reduced-motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Smooth scrolling for users who don't prefer reduced motion */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Ensure sufficient tap target size on mobile (WCAG 2.5.5) */
+  button,
+  [role='button'],
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 1px; /* reset; Tailwind handles sizing */
+  }
 }

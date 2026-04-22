@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import localFont from 'next/font/local'
 import { ThemeProvider } from 'next-themes'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 const calSans = localFont({
@@ -19,8 +20,12 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'ProcureMaster',
+  title: {
+    default: 'ProcureMaster',
+    template: '%s | ProcureMaster',
+  },
   description: 'AI-powered procurement intelligence platform',
+  metadataBase: new URL('https://procuremaster.app'),
 }
 
 export default function RootLayout({
@@ -39,6 +44,7 @@ export default function RootLayout({
         >
           <TooltipProvider>
             {children}
+            <Toaster richColors closeButton />
           </TooltipProvider>
         </ThemeProvider>
       </body>
