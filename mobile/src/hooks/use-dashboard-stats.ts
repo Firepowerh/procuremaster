@@ -55,7 +55,8 @@ export function useDashboardStats() {
           supabase
             .from('evaluations')
             .select('id', { count: 'exact', head: true })
-            .in('evaluation_status', ['criteria_pending', 'scoring_in_progress']),
+            .eq('org_id', profile.org_id)
+            .in('status', ['criteria_pending', 'scoring_in_progress']),
           supabase
             .from('requirements')
             .select('id', { count: 'exact', head: true })
@@ -94,6 +95,7 @@ export function useDashboardStats() {
           supabase
             .from('approval_requests')
             .select('id', { count: 'exact', head: true })
+            .eq('org_id', profile.org_id)
             .eq('status', 'pending'),
           supabase
             .from('contracts')
@@ -113,6 +115,13 @@ export function useDashboardStats() {
           .select('id')
           .eq('auth_user_id', profile.id)
           .single()
+
+        if (vendorRes.error && vendorRes.error.code !== 'PGRST116') {
+          // PGRST116 = no rows found, which is a valid state (new vendor not yet set up)
+          console.error('Failed to fetch vendor account:', vendorRes.error)
+          setError('Failed to load vendor data')
+          return
+        }
 
         const count = vendorRes.data
           ? (await supabase
