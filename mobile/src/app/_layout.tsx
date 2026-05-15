@@ -1,16 +1,27 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import React from 'react';
-import { useColorScheme } from 'react-native';
+import '../../global.css'
+import { Stack } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { useAuth } from '@/src/hooks/use-auth'
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+function RootLayoutInner() {
+  useAuth()
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
-  );
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(auth)" />
+      <Stack.Screen name="(app)" />
+      <Stack.Screen name="onboarding" />
+      <Stack.Screen name="invite" />
+    </Stack>
+  )
+}
+
+export default function RootLayout() {
+  return (
+    <SafeAreaProvider>
+      <RootLayoutInner />
+      <StatusBar style="dark" />
+    </SafeAreaProvider>
+  )
 }
