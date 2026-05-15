@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Link } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { supabase } from '@/src/lib/supabase/client'
+import { useAuthStore } from '@/src/stores/auth-store'
 import { signupSchema, type SignupFormData } from '@/src/lib/schemas/auth'
 import { Button } from '@/src/components/ui/Button'
 import { Input } from '@/src/components/ui/Input'
@@ -60,7 +61,11 @@ export default function SignupScreen() {
 
       if (profileError) {
         Alert.alert('Setup failed', 'Could not create profile. Please try again.')
+        return
       }
+
+      // Profile now exists — re-fetch to populate the auth store and trigger redirect
+      await useAuthStore.getState().fetchProfile(userId)
     } catch (err) {
       console.error('Signup error:', err)
       Alert.alert('Error', 'An unexpected error occurred. Please try again.')
