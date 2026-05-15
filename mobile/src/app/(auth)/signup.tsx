@@ -27,38 +27,43 @@ export default function SignupScreen() {
   })
 
   async function onSubmit({ fullName, email, password, orgName, currency }: SignupFormData) {
-    const { data: authData, error: authError } = await supabase.auth.signUp({ email, password })
-    if (authError || !authData.user) {
-      Alert.alert('Sign up failed', authError?.message ?? 'Unknown error')
-      return
-    }
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({ email, password })
+      if (authError || !authData.user) {
+        Alert.alert('Sign up failed', authError?.message ?? 'Unknown error')
+        return
+      }
 
-    const userId = authData.user.id
-    const slug = orgName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      const userId = authData.user.id
+      const slug = orgName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
-    const { data: org, error: orgError } = await supabase
-      .from('organisations')
-      .insert({ name: orgName, slug, currency })
-      .select('id')
-      .single()
+      const { data: org, error: orgError } = await supabase
+        .from('organisations')
+        .insert({ name: orgName, slug, currency })
+        .select('id')
+        .single()
 
-    if (orgError || !org) {
-      Alert.alert('Setup failed', 'Could not create organisation. Please try again.')
-      return
-    }
+      if (orgError || !org) {
+        Alert.alert('Setup failed', 'Could not create organisation. Please try again.')
+        return
+      }
 
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({
-        id: userId,
-        org_id: org.id,
-        full_name: fullName,
-        role: 'procurement_manager',
-        onboarding_complete: false,
-      })
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: userId,
+          org_id: org.id,
+          full_name: fullName,
+          role: 'procurement_manager',
+          onboarding_complete: false,
+        })
 
-    if (profileError) {
-      Alert.alert('Setup failed', 'Could not create profile. Please try again.')
+      if (profileError) {
+        Alert.alert('Setup failed', 'Could not create profile. Please try again.')
+      }
+    } catch (err) {
+      console.error('Signup error:', err)
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.')
     }
   }
 
