@@ -10,13 +10,15 @@ export function Skeleton({ className = '', height = 20 }: SkeletonProps) {
   const opacity = useRef(new Animated.Value(0.3)).current
 
   useEffect(() => {
-    Animated.loop(
+    const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, { toValue: 1, duration: 700, useNativeDriver: true }),
         Animated.timing(opacity, { toValue: 0.3, duration: 700, useNativeDriver: true }),
       ])
-    ).start()
-  }, [])
+    )
+    animation.start()
+    return () => animation.stop()
+  }, [opacity])
 
   return (
     <Animated.View
