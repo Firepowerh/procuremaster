@@ -14,7 +14,11 @@ export function useAuth() {
         setSession(newSession)
 
         if (newSession?.user) {
-          await fetchProfile(newSession.user.id)
+          try {
+            await fetchProfile(newSession.user.id)
+          } catch (error) {
+            console.error('Failed to fetch profile:', error)
+          }
         } else {
           reset()
         }
@@ -24,7 +28,7 @@ export function useAuth() {
     )
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [setSession, fetchProfile, reset])
 
   useEffect(() => {
     if (isLoading) return

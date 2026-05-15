@@ -37,7 +37,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       .eq('id', userId)
       .single()
 
-    if (!error && data) {
+    if (error) {
+      console.error('fetchProfile error:', error)
+      return
+    }
+    if (data) {
       set({ profile: data as Profile })
     }
   },
