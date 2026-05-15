@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "ProcureMaster",
+    "slug": "procuremaster",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "procuremaster",
+    "platforms": ["ios", "android"],
+    "icon": "./assets/images/icon.png",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "tech.storygraph.procuremaster"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "tech.storygraph.procuremaster"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
