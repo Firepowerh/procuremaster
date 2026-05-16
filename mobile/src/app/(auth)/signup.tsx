@@ -35,6 +35,15 @@ export default function SignupScreen() {
         return
       }
 
+      // If session is null, email confirmation is still ON in Supabase dashboard
+      if (!authData.session) {
+        Alert.alert(
+          'Confirm your email',
+          'A confirmation link was sent to ' + email + '. Please confirm your email, then sign in.'
+        )
+        return
+      }
+
       const userId = authData.user.id
       const slug = orgName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
@@ -45,7 +54,7 @@ export default function SignupScreen() {
         .single()
 
       if (orgError || !org) {
-        Alert.alert('Setup failed', orgError?.message ?? 'Could not create organisation.')
+        Alert.alert('Org failed', `table:organisations\n${orgError?.message}`)
         return
       }
 
@@ -60,7 +69,7 @@ export default function SignupScreen() {
         })
 
       if (profileError) {
-        Alert.alert('Setup failed', 'Could not create profile. Please try again.')
+        Alert.alert('Profile failed', `table:profiles\n${profileError?.message}`)
         return
       }
 
