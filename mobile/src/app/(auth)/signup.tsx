@@ -45,7 +45,7 @@ export default function SignupScreen() {
         .single()
 
       if (orgError || !org) {
-        Alert.alert('Setup failed', 'Could not create organisation. Please try again.')
+        Alert.alert('Setup failed', orgError?.message ?? 'Could not create organisation.')
         return
       }
 

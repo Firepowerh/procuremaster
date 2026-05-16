@@ -36,7 +36,8 @@ export function useAuth() {
     const inAuthGroup = segments[0] === '(auth)'
     const inOnboarding = segments[0] === 'onboarding'
 
-    if (!session) {
+    if (!session || (session && !profile)) {
+      // No session, or session exists but profile missing (signup failed mid-way)
       if (!inAuthGroup) router.replace('/(auth)/login')
     } else if (profile && !profile.onboarding_complete) {
       if (!inOnboarding) router.replace('/onboarding')
