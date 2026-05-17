@@ -1,15 +1,20 @@
+import { useEffect } from 'react'
 import { View, Text, Pressable, Alert } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { supabase } from '@/src/lib/supabase/client'
+import { useAuthStore } from '@/src/stores/auth-store'
 import { loginSchema, type LoginFormData } from '@/src/lib/schemas/auth'
 import { Button } from '@/src/components/ui/Button'
 import { Input } from '@/src/components/ui/Input'
 import { KeyboardAvoidingWrapper } from '@/src/components/layout/KeyboardAvoidingWrapper'
 
 export default function LoginScreen() {
+  const router = useRouter()
+  const { fetchProfile, setSession } = useAuthStore()
+
   const {
     control,
     handleSubmit,
@@ -19,10 +24,27 @@ export default function LoginScreen() {
     defaultValues: { email: '', password: '' },
   })
 
+  // If already logged in, go straight to dashboard
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        setSession(session)
+        await fetchProfile(session.user.id)
+        router.replace('/(app)/dashboard')
+      }
+    })
+  }, [])
+
   async function onSubmit({ email, password }: LoginFormData) {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       Alert.alert('Sign in failed', error.message)
+      return
+    }
+    if (data.session?.user) {
+      setSession(data.session)
+      await fetchProfile(data.session.user.id)
+      router.replace('/(app)/dashboard')
     }
   }
 
