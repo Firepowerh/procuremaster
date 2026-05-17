@@ -1,11 +1,13 @@
 import { View, Text, Alert } from 'react-native'
 import { useState } from 'react'
+import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { supabase } from '@/src/lib/supabase/client'
 import { useAuthStore } from '@/src/stores/auth-store'
 import { Button } from '@/src/components/ui/Button'
 
 export default function OnboardingScreen() {
+  const router = useRouter()
   const { profile, setProfile } = useAuthStore()
   const [loading, setLoading] = useState(false)
 
@@ -19,21 +21,18 @@ export default function OnboardingScreen() {
   async function handleGetStarted() {
     if (!profile) return
     setLoading(true)
-
     try {
       const { error } = await supabase
         .from('profiles')
         .update({ onboarding_complete: true })
         .eq('id', profile.id)
-
       if (error) {
         Alert.alert('Error', 'Could not complete setup. Please try again.')
         return
       }
-
       setProfile({ ...profile, onboarding_complete: true })
-    } catch (err) {
-      console.error('Onboarding error:', err)
+      router.replace('/(app)/dashboard')
+    } catch {
       Alert.alert('Error', 'An unexpected error occurred.')
     } finally {
       setLoading(false)
@@ -47,7 +46,6 @@ export default function OnboardingScreen() {
           <View className="w-16 h-16 rounded-2xl bg-primary-600 items-center justify-center">
             <Text className="text-white text-2xl font-bold">P</Text>
           </View>
-
           <View className="gap-3">
             <Text className="text-3xl font-bold text-slate-900">
               Welcome, {profile?.full_name?.split(' ')[0]}!
@@ -56,11 +54,9 @@ export default function OnboardingScreen() {
               Your workspace is ready. You're set up as{' '}
               <Text className="font-semibold text-slate-700">
                 {roleLabel[profile?.role ?? ''] ?? profile?.role}
-              </Text>
-              .
+              </Text>.
             </Text>
           </View>
-
           <View className="bg-slate-50 rounded-2xl p-5 gap-3">
             <Text className="font-semibold text-slate-900">What you can do:</Text>
             {profile?.role === 'procurement_manager' && (
@@ -74,26 +70,22 @@ export default function OnboardingScreen() {
               <View className="gap-2">
                 <Text className="text-slate-600">• Submit procurement requirements</Text>
                 <Text className="text-slate-600">• Track RFP progress</Text>
-                <Text className="text-slate-600">• View evaluation results</Text>
               </View>
             )}
             {profile?.role === 'finance_approver' && (
               <View className="gap-2">
                 <Text className="text-slate-600">• Review and approve vendor selections</Text>
                 <Text className="text-slate-600">• Manage contracts</Text>
-                <Text className="text-slate-600">• Track spend commitments</Text>
               </View>
             )}
             {profile?.role === 'vendor' && (
               <View className="gap-2">
                 <Text className="text-slate-600">• View RFP invitations</Text>
                 <Text className="text-slate-600">• Submit your proposals</Text>
-                <Text className="text-slate-600">• Track your evaluation status</Text>
               </View>
             )}
           </View>
         </View>
-
         <Button label="Get started" onPress={handleGetStarted} loading={loading} />
       </View>
     </SafeAreaView>
