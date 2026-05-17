@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
+import { useFonts } from 'expo-font'
 import { useAuthStore } from '@/src/stores/auth-store'
 
 const ROLE_TABS: Record<string, string[]> = {
@@ -13,9 +14,19 @@ export default function AppLayout() {
   const { profile } = useAuthStore()
   const allowed = ROLE_TABS[profile?.role ?? ''] ?? ['dashboard', 'settings']
 
-  const tab = (name: string) => ({
-    href: allowed.includes(name) ? undefined : null,
-  })
+  // Explicitly load Ionicons font
+  const [fontsLoaded] = useFonts(Ionicons.font)
+
+  const hidden = (name: string): object =>
+    allowed.includes(name)
+      ? {}
+      : { tabBarItemStyle: { display: 'none', width: 0, height: 0 } }
+
+  const icon = (name: string, focused: boolean, color: string) => (
+    fontsLoaded
+      ? <Ionicons name={name as any} size={22} color={color} />
+      : null
+  )
 
   return (
     <Tabs
@@ -37,70 +48,56 @@ export default function AppLayout() {
         name="dashboard"
         options={{
           title: 'Home',
-          ...tab('dashboard'),
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'home' : 'home-outline'} size={22} color={color} />
-          ),
+          ...hidden('dashboard'),
+          tabBarIcon: ({ color, focused }) => icon(focused ? 'home' : 'home-outline', focused, color),
         }}
       />
       <Tabs.Screen
         name="requirements"
         options={{
           title: 'Requirements',
-          ...tab('requirements'),
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'document-text' : 'document-text-outline'} size={22} color={color} />
-          ),
+          ...hidden('requirements'),
+          tabBarIcon: ({ color, focused }) => icon(focused ? 'document-text' : 'document-text-outline', focused, color),
         }}
       />
       <Tabs.Screen
         name="rfps"
         options={{
           title: 'RFPs',
-          ...tab('rfps'),
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'clipboard' : 'clipboard-outline'} size={22} color={color} />
-          ),
+          ...hidden('rfps'),
+          tabBarIcon: ({ color, focused }) => icon(focused ? 'clipboard' : 'clipboard-outline', focused, color),
         }}
       />
       <Tabs.Screen
         name="vendors"
         options={{
           title: 'Vendors',
-          ...tab('vendors'),
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'people' : 'people-outline'} size={22} color={color} />
-          ),
+          ...hidden('vendors'),
+          tabBarIcon: ({ color, focused }) => icon(focused ? 'people' : 'people-outline', focused, color),
         }}
       />
       <Tabs.Screen
         name="approvals"
         options={{
           title: 'Approvals',
-          ...tab('approvals'),
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'checkmark-circle' : 'checkmark-circle-outline'} size={22} color={color} />
-          ),
+          ...hidden('approvals'),
+          tabBarIcon: ({ color, focused }) => icon(focused ? 'checkmark-circle' : 'checkmark-circle-outline', focused, color),
         }}
       />
       <Tabs.Screen
         name="contracts"
         options={{
           title: 'Contracts',
-          ...tab('contracts'),
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'document' : 'document-outline'} size={22} color={color} />
-          ),
+          ...hidden('contracts'),
+          tabBarIcon: ({ color, focused }) => icon(focused ? 'document' : 'document-outline', focused, color),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
-          ...tab('settings'),
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'settings' : 'settings-outline'} size={22} color={color} />
-          ),
+          ...hidden('settings'),
+          tabBarIcon: ({ color, focused }) => icon(focused ? 'settings' : 'settings-outline', focused, color),
         }}
       />
     </Tabs>
