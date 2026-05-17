@@ -1,9 +1,10 @@
+import React from 'react'
 import { Text } from 'react-native'
 import { Tabs } from 'expo-router'
 
-function Icon({ emoji, focused }: { emoji: string; focused: boolean }) {
-  return <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>{emoji}</Text>
-}
+const tabIcon = (emoji: string) =>
+  ({ focused }: { focused: boolean }) =>
+    React.createElement(Text, { style: { fontSize: 20, opacity: focused ? 1 : 0.5 } }, emoji)
 
 export default function AppLayout() {
   return (
@@ -22,57 +23,13 @@ export default function AppLayout() {
         tabBarLabelStyle: { fontSize: 10, fontWeight: '500' },
       }}
     >
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ focused }) => <Icon emoji="🏠" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="requirements"
-        options={{
-          title: 'Requirements',
-          tabBarIcon: ({ focused }) => <Icon emoji="📋" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="rfps"
-        options={{
-          title: 'RFPs',
-          tabBarIcon: ({ focused }) => <Icon emoji="📄" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="vendors"
-        options={{
-          title: 'Vendors',
-          tabBarIcon: ({ focused }) => <Icon emoji="👥" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="approvals"
-        options={{
-          title: 'Approvals',
-          href: null,
-          tabBarIcon: ({ focused }) => <Icon emoji="✅" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="contracts"
-        options={{
-          title: 'Contracts',
-          href: null,
-          tabBarIcon: ({ focused }) => <Icon emoji="📃" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ focused }) => <Icon emoji="⚙️" focused={focused} />,
-        }}
-      />
+      <Tabs.Screen name="dashboard/index"    options={{ title: 'Home',         tabBarIcon: tabIcon('🏠') }} />
+      <Tabs.Screen name="requirements/index" options={{ title: 'Requirements', tabBarIcon: tabIcon('📋') }} />
+      <Tabs.Screen name="rfps/index"         options={{ title: 'RFPs',         tabBarIcon: tabIcon('📄') }} />
+      <Tabs.Screen name="vendors/index"      options={{ title: 'Vendors',      tabBarIcon: tabIcon('👥') }} />
+      <Tabs.Screen name="approvals/index"    options={{ title: 'Approvals',    tabBarIcon: tabIcon('✅'), href: null }} />
+      <Tabs.Screen name="contracts/index"    options={{ title: 'Contracts',    tabBarIcon: tabIcon('📃'), href: null }} />
+      <Tabs.Screen name="settings/index"     options={{ title: 'Settings',     tabBarIcon: tabIcon('⚙️') }} />
     </Tabs>
   )
 }
