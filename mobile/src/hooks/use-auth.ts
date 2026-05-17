@@ -4,51 +4,25 @@ import { supabase } from '../lib/supabase/client'
 import { useAuthStore } from '../stores/auth-store'
 
 export function useAuth() {
-  const { session, profile, isLoading, setSession, fetchProfile, reset } = useAuthStore()
+  const { session, profile, setSession, fetchProfile, reset } = useAuthStore()
   const router = useRouter()
   const segments = useSegments()
 
   useEffect(() => {
-    let mounted = true
-
-    // Immediately check existing session from AsyncStorage
-    supabase.auth.getSession().then(async ({ data: { session: existing } }) => {
-      if (!mounted) return
-      setSession(existing)
-      if (existing?.user) {
-        await fetchProfile(existing.user.id)
-      }
-      useAuthStore.setState({ isLoading: false })
-    })
-
-    // Listen for auth changes (login, logout, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
-        if (!mounted) return
-        if (event === 'INITIAL_SESSION') return // handled by getSession above
         setSession(newSession)
         if (newSession?.user) {
-          try {
-            await fetchProfile(newSession.user.id)
-          } catch {
-            // ignore
-          }
+          await fetchProfile(newSession.user.id)
         } else {
           reset()
         }
-        useAuthStore.setState({ isLoading: false })
       }
     )
-
-    return () => {
-      mounted = false
-      subscription.unsubscribe()
-    }
+    return () => subscription.unsubscribe()
   }, [])
 
   useEffect(() => {
-    if (isLoading) return
-
     const inAuthGroup = segments[0] === '(auth)'
     const inOnboarding = segments[0] === 'onboarding'
 
@@ -59,7 +33,7 @@ export function useAuth() {
     } else {
       if (inAuthGroup || inOnboarding) router.replace('/(app)/dashboard')
     }
-  }, [session, profile, isLoading, segments])
+  }, [session, profile, segments])
 
-  return { session, profile, isLoading }
+  return { session, profile }
 }

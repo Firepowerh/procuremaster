@@ -13,7 +13,6 @@ interface Profile {
 interface AuthState {
   session: Session | null
   profile: Profile | null
-  isLoading: boolean
   setSession: (session: Session | null) => void
   setProfile: (profile: Profile | null) => void
   fetchProfile: (userId: string) => Promise<void>
@@ -24,7 +23,6 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   session: null,
   profile: null,
-  isLoading: true,
 
   setSession: (session) => set({ session }),
 
@@ -51,5 +49,5 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ session: null, profile: null })
   },
 
-  reset: () => set({ session: null, profile: null, isLoading: false }),
+  reset: () => set({ session: null, profile: null }),
 }))
