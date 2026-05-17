@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useRouter, useSegments } from 'expo-router'
+import { useRouter, useSegments, useRootNavigationState } from 'expo-router'
 import { supabase } from '../lib/supabase/client'
 import { useAuthStore } from '../stores/auth-store'
 
@@ -7,6 +7,7 @@ export function useAuth() {
   const { session, profile, setSession, fetchProfile, reset } = useAuthStore()
   const router = useRouter()
   const segments = useSegments()
+  const navState = useRootNavigationState()
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -23,6 +24,9 @@ export function useAuth() {
   }, [])
 
   useEffect(() => {
+    // Wait until the Root Layout navigator has mounted
+    if (!navState?.key) return
+
     const inAuthGroup = segments[0] === '(auth)'
     const inOnboarding = segments[0] === 'onboarding'
 
@@ -33,7 +37,7 @@ export function useAuth() {
     } else {
       if (inAuthGroup || inOnboarding) router.replace('/(app)/dashboard')
     }
-  }, [session, profile, segments])
+  }, [session, profile, segments, navState?.key])
 
   return { session, profile }
 }
