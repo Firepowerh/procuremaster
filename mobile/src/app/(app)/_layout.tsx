@@ -15,7 +15,6 @@ export default function AppLayout() {
 
   const tab = (name: string) => ({
     href: allowed.includes(name) ? undefined : null,
-    tabBarButton: allowed.includes(name) ? undefined : () => null,
   })
 
   return (
