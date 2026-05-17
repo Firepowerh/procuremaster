@@ -59,7 +59,9 @@ export default function SignupScreen() {
         return
       }
 
-      // Profile now exists — re-fetch to populate the auth store and trigger redirect
+      // Refresh session so the auth hook repopulates org_id + role in the JWT,
+      // which is required for the profiles_read RLS policy to work.
+      await supabase.auth.refreshSession()
       await useAuthStore.getState().fetchProfile(userId)
     } catch (err) {
       console.error('Signup error:', err)
