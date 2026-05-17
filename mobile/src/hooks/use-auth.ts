@@ -9,26 +9,42 @@ export function useAuth() {
   const segments = useSegments()
 
   useEffect(() => {
+    let mounted = true
+
+    // Immediately check existing session from AsyncStorage
+    supabase.auth.getSession().then(async ({ data: { session: existing } }) => {
+      if (!mounted) return
+      setSession(existing)
+      if (existing?.user) {
+        await fetchProfile(existing.user.id)
+      }
+      useAuthStore.setState({ isLoading: false })
+    })
+
+    // Listen for auth changes (login, logout, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
+        if (!mounted) return
+        if (event === 'INITIAL_SESSION') return // handled by getSession above
         setSession(newSession)
-
         if (newSession?.user) {
           try {
             await fetchProfile(newSession.user.id)
-          } catch (error) {
-            console.error('Failed to fetch profile:', error)
+          } catch {
+            // ignore
           }
         } else {
           reset()
         }
-
         useAuthStore.setState({ isLoading: false })
       }
     )
 
-    return () => subscription.unsubscribe()
-  }, [setSession, fetchProfile, reset])
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
+  }, [])
 
   useEffect(() => {
     if (isLoading) return
@@ -36,12 +52,11 @@ export function useAuth() {
     const inAuthGroup = segments[0] === '(auth)'
     const inOnboarding = segments[0] === 'onboarding'
 
-    if (!session || (session && !profile)) {
-      // No session, or session exists but profile missing (signup failed mid-way)
+    if (!session || !profile) {
       if (!inAuthGroup) router.replace('/(auth)/login')
-    } else if (profile && !profile.onboarding_complete) {
+    } else if (!profile.onboarding_complete) {
       if (!inOnboarding) router.replace('/onboarding')
-    } else if (profile?.onboarding_complete) {
+    } else {
       if (inAuthGroup || inOnboarding) router.replace('/(app)/dashboard')
     }
   }, [session, profile, isLoading, segments])
