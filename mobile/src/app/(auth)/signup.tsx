@@ -47,29 +47,15 @@ export default function SignupScreen() {
       const userId = authData.user.id
       const slug = orgName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
-      const { data: org, error: orgError } = await supabase
-        .from('organisations')
-        .insert({ name: orgName, slug, currency })
-        .select('id')
-        .single()
+      const { error: setupError } = await supabase.rpc('create_org_and_profile', {
+        p_org_name:  orgName,
+        p_slug:      slug,
+        p_currency:  currency,
+        p_full_name: fullName,
+      })
 
-      if (orgError || !org) {
-        Alert.alert('Org failed', `table:organisations\n${orgError?.message}`)
-        return
-      }
-
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          org_id: org.id,
-          full_name: fullName,
-          role: 'procurement_manager',
-          onboarding_complete: false,
-        })
-
-      if (profileError) {
-        Alert.alert('Profile failed', `table:profiles\n${profileError?.message}`)
+      if (setupError) {
+        Alert.alert('Setup failed', setupError.message)
         return
       }
 
